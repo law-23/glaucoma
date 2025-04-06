@@ -106,7 +106,7 @@ with col1:
             oct_input, oct_display = preprocess_oct(oct_file)
         if oct_input is not None:
             oct_label = "Glaucoma"  # Hardcoded prediction
-            st.image(oct_display, caption="OCT Scan", use_column_width=True)
+            st.image(oct_display, caption="OCT Scan", use_container_width=True)
             st.success(f"OCT Prediction: {oct_label}")
 
 with col2:
@@ -117,7 +117,7 @@ with col2:
             fundus_input, fundus_display = preprocess_fundus(fundus_file)
         if fundus_input is not None:
             fundus_label = "Glaucoma"  # Hardcoded prediction
-            st.image(fundus_display, caption="Fundus Image", use_column_width=True)
+            st.image(fundus_display, caption="Fundus Image", use_container_width=True)
             st.success(f"Fundus Prediction: {fundus_label}")
 
 st.markdown("---")
