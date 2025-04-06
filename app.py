@@ -30,7 +30,7 @@ def focal_loss(gamma=2.0, alpha=0.25):
 # ====================
 # Load Models
 # ====================
-@st.cache_resource
+#@st.cache_resource
 def load_cnn_model():
     load_model("cnn_model_glaucoma.h5", compile=False)
     model(np.zeros((1, 224, 224, 3)))
