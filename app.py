@@ -32,10 +32,7 @@ def focal_loss(gamma=2.0, alpha=0.25):
 # ====================
 @st.cache_resource
 def load_cnn_model():
-    model = load_model(
-        "cnn_model_glaucoma.h5",
-        custom_objects={'loss': focal_loss()}
-    )
+    load_model("cnn_model_glaucoma.h5", compile=False)
     model(np.zeros((1, 224, 224, 3)))
     return model
 
@@ -149,7 +146,7 @@ with col1:
             st.success(f"OCT Prediction: {oct_label}")
 
 with col2:
-    st.header("👁️ Fundus Image (jpg, png)")
+    st.header("Fundus Image (jpg, png)")
     fundus_file = st.file_uploader("Upload Fundus image", type=["jpg", "jpeg", "png"], key="fundus_upload")
     if fundus_file:
         with st.spinner("Processing Fundus..."):
