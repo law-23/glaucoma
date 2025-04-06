@@ -5,7 +5,6 @@ import cv2
 from PIL import Image
 import tensorflow as tf
 from tensorflow.keras import backend as K
-from tensorflow.keras.models import load_model
 from keras_legacy.saving import load_model 
 from fpdf import FPDF
 import base64
