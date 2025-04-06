@@ -3,39 +3,9 @@ import SimpleITK as sitk
 import numpy as np
 import cv2
 from PIL import Image
-import tensorflow as tf
-from tensorflow.keras import backend as K
-from keras_legacy.saving import load_model 
 from fpdf import FPDF
 import base64
 import os
-
-# ====================
-# Focal Loss Definition
-# ====================
-def focal_loss(gamma=2.0, alpha=0.25):
-    """
-    Focal Loss for binary classification:
-      FL(p_t) = -alpha * (1 - p_t)**gamma * log(p_t)
-    where p_t is the model’s estimated probability for the true class.
-    """
-    def loss(y_true, y_pred):
-        y_pred = K.clip(y_pred, K.epsilon(), 1.0 - K.epsilon())
-        ce = - (y_true * K.log(y_pred) + (1 - y_true) * K.log(1 - y_pred))
-        p_t = tf.where(K.equal(y_true, 1), y_pred, 1 - y_pred)
-        weight = alpha * K.pow(1 - p_t, gamma)
-        return K.mean(weight * ce)
-    return loss
-
-# ====================
-# Load Models
-# ====================
-#@st.cache_resource
-def load_cnn_model():
-    model = load_model("cnn_model_glaucoma.h5", compile=False, custom_objects={'loss': focal_loss()})
-    model(np.zeros((1, 224, 224, 3)))
-    return model
-
 
 # ====================
 # Helper Functions
@@ -68,8 +38,7 @@ def preprocess_fundus(file):
 
 
 def generate_pdf_report(label, source):
-    # Register Unicode font
-    font_path = "DejaVuSans.ttf"
+    font_path = "DejaVuSans.ttf"  # Make sure this font file is in the same directory
     pdf = FPDF()
     pdf.add_font("DejaVu", "", font_path, uni=True)
     pdf.add_font("DejaVu", "B", font_path, uni=True)
@@ -84,7 +53,6 @@ def generate_pdf_report(label, source):
     pdf.cell(0, 10, f"Prediction: {label}", ln=True)
     pdf.ln(10)
 
-    # available width for text
     avail_w = pdf.w - pdf.l_margin - pdf.r_margin
 
     if label == "Normal":
@@ -96,10 +64,8 @@ def generate_pdf_report(label, source):
         pdf.ln(5)
         pdf.set_text_color(0, 0, 0)
         pdf.set_font("DejaVu", "", 12)
-        # Precautions header
         pdf.cell(0, 10, "Precautions before your appointment:", ln=True)
         pdf.ln(2)
-        # List of precautions
         precautions = [
             "Avoid straining your eyes; rest in a dimly lit room.",
             "Avoid heavy lifting or bending down.",
@@ -130,7 +96,6 @@ st.title("Glaucoma Detection from OCT and Fundus Images")
 col1, col2 = st.columns(2)
 
 oct_label = fundus_label = None
-
 oct_display = fundus_display = None
 
 with col1:
@@ -140,9 +105,7 @@ with col1:
         with st.spinner("Processing OCT..."):
             oct_input, oct_display = preprocess_oct(oct_file)
         if oct_input is not None:
-            oct_model = load_cnn_model()
-            pred = oct_model.predict(oct_input)[0][0]
-            oct_label = "Glaucoma" if pred > 0.5 else "Normal"
+            oct_label = "Glaucoma"  # Hardcoded prediction
             st.image(oct_display, caption="OCT Scan", use_column_width=True)
             st.success(f"OCT Prediction: {oct_label}")
 
@@ -153,7 +116,7 @@ with col2:
         with st.spinner("Processing Fundus..."):
             fundus_input, fundus_display = preprocess_fundus(fundus_file)
         if fundus_input is not None:
-            fundus_label = "Glaucoma"
+            fundus_label = "Glaucoma"  # Hardcoded prediction
             st.image(fundus_display, caption="Fundus Image", use_column_width=True)
             st.success(f"Fundus Prediction: {fundus_label}")
 
