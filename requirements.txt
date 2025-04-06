@@ -6,4 +6,4 @@ SimpleITK
 Pillow
 matplotlib
 fpdf
-cv2
+opencv-python
