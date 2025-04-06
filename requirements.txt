@@ -6,5 +6,4 @@ pillow
 matplotlib
 simpleitk
 fpdf
-keras-legacy==1.0.0
-keras==3.0.5
+
